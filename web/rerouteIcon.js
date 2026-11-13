@@ -12,6 +12,8 @@ import {
 
 let rerouteDOMObserver = null;
 
+export const REROUTE_TITLE_BAR_HEIGHT = 30;
+
 
 export function loadRerouteIcon() {
 
@@ -101,6 +103,11 @@ export function drawRerouteIcon(
     const size = 24;
     const width = node?.size?.[0] || 0;
     const height = node?.size?.[1] || 0;
+    const titleHeight =
+        node?.title_mode === globalThis.LiteGraph?.NO_TITLE
+            ? 0
+            : globalThis.LiteGraph?.NODE_TITLE_HEIGHT ||
+                REROUTE_TITLE_BAR_HEIGHT;
 
 
     ctx.save();
@@ -112,13 +119,89 @@ export function drawRerouteIcon(
     ctx.drawImage(
         icon,
         (width - size) / 2,
-        (height - size) / 2,
+        titleHeight + (height - size) / 2,
         size,
         size
     );
 
 
     ctx.restore();
+}
+
+
+function addRerouteTitleBar(element, node) {
+
+    const wrapper =
+        element.querySelector(
+            '[data-testid="node-inner-wrapper"]'
+        );
+
+    if (!wrapper) {
+        return;
+    }
+
+    let titleBar =
+        wrapper.querySelector(
+            "[data-htmutilitty-reroute-title]"
+        );
+
+    if (!titleBar) {
+
+        titleBar =
+            document.createElement("div");
+
+        titleBar.dataset.htmutilittyRerouteTitle =
+            "true";
+
+        titleBar.className =
+            "lg-node-header w-full min-w-0 " +
+            "p-1 text-xs rounded-t-xl";
+
+        Object.assign(
+            titleBar.style,
+            {
+                boxSizing: "border-box",
+                display: "flex",
+                flex: `0 0 ${REROUTE_TITLE_BAR_HEIGHT}px`,
+                alignItems: "center",
+                height: `${REROUTE_TITLE_BAR_HEIGHT}px`,
+                minHeight: `${REROUTE_TITLE_BAR_HEIGHT}px`,
+                overflow: "hidden",
+            }
+        );
+
+        const label =
+            document.createElement("div");
+
+        label.dataset.htmutilittyRerouteTitleText =
+            "true";
+
+        label.className =
+            "min-w-0 flex-1 truncate";
+
+        titleBar.appendChild(label);
+
+        wrapper.insertBefore(
+            titleBar,
+            wrapper.firstElementChild
+        );
+    }
+
+    const label =
+        titleBar.querySelector(
+            "[data-htmutilitty-reroute-title-text]"
+        );
+
+    const title =
+        node.title || "Reroute";
+
+    if (
+        label &&
+        label.textContent !== title
+    ) {
+        label.textContent = title;
+        label.title = title;
+    }
 }
 
 
@@ -130,12 +213,7 @@ function addRerouteIconToElement(
     const nodeId =
         element.getAttribute("data-node-id");
 
-    if (
-        nodeId === null ||
-        element.querySelector(
-            "[data-htmutilitty-reroute-icon]"
-        )
-    ) {
+    if (nodeId === null) {
         return;
     }
 
@@ -146,6 +224,25 @@ function addRerouteIconToElement(
         );
 
     if (!isRerouteNode(node)) {
+        return;
+    }
+
+    addRerouteTitleBar(
+        element,
+        node
+    );
+
+    const existingIcon =
+        element.querySelector(
+            "[data-htmutilitty-reroute-icon]"
+        );
+
+    if (existingIcon) {
+        existingIcon.style.top =
+            `calc(50% + ${
+                REROUTE_TITLE_BAR_HEIGHT / 2
+            }px)`;
+
         return;
     }
 
@@ -170,7 +267,9 @@ function addRerouteIconToElement(
         {
             position: "absolute",
             left: "50%",
-            top: "50%",
+            top: `calc(50% + ${
+                REROUTE_TITLE_BAR_HEIGHT / 2
+            }px)`,
             width: "24px",
             height: "24px",
             transform: "translate(-50%, -50%)",
@@ -181,6 +280,35 @@ function addRerouteIconToElement(
     );
 
     element.appendChild(icon);
+}
+
+
+export function updateRerouteTitleElement(node) {
+
+    if (!node || !document.body) {
+        return;
+    }
+
+    const nodeId =
+        String(node.id);
+
+    for (
+        const element of
+        document.querySelectorAll("[data-node-id]")
+    ) {
+
+        if (
+            element.getAttribute("data-node-id") ===
+            nodeId
+        ) {
+            addRerouteTitleBar(
+                element,
+                node
+            );
+
+            return;
+        }
+    }
 }
 
 

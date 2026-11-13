@@ -3,6 +3,7 @@
 - **Author:** HTMLDigger
 - **Date:** 2026-11-13
 - **Description:** A small ComfyUI frontend extension for minimizing and expanding nodes. Use `Ctrl+Shift+M` to toggle selected nodes, or use the node right-click menu.
+- **More details:** [GitHub repository](https://github.com/Ripax/ComfyUI-HTMutilitty)
 
 ## Installation
 

@@ -33,8 +33,8 @@ The main bootstrap lives in `web/minimize_shortcut.js`. It calls `app.registerEx
 - `settings`: a UI toggle for the right-click menu
 - `commands`: a command that toggles selected nodes
 - `keybindings`: `Ctrl+Shift+M` for minimizing/expanding
-- `nodeCreated`: per-node registration for minimize rendering and reroute icons
-- `setup`: keyboard shortcut registration and a small console log banner
+- `nodeCreated` and `loadedGraphNode`: per-node reroute icon and title setup
+- `setup`: keyboard shortcut registration, the Reroute info-link observer, and a small console log banner
 
 ### State and rendering helpers
 
@@ -43,7 +43,9 @@ The extension keeps its behavior split into small frontend modules:
 - `web/config.js`: shared IDs, colors, and static asset URLs.
 - `web/minimize.js`: minimization state, toggle logic, and selected-node handling. This is the core of the feature and uses `node.flags.collapsed` plus a custom `__minimizeShortcutMinimized` flag to keep the UI state.
 - `web/shortcuts.js`: handles keyboard shortcuts like `.` and `f` in addition to the minimize shortcut flow.
-- `web/rerouteIcon.js`: draws the reroute icon in classic mode and adds it to the node element in Nodes 2.0.
+- `web/reroute.js`: creates Reroute nodes and updates their titles from the connected input node.
+- `web/rerouteInfo.js`: adds project override, date, and GitHub details to the embedded Reroute Info panel.
+- `web/rerouteIcon.js`: renders Reroute title bars and icons in classic mode and Nodes 2.0.
 - `web/colors.js`: applies green node colors while minimized and restores the original colors on expand.
 - `web/fitView.js`: centers or fits the canvas around selected nodes.
 - `web/state.js`: stores the loaded reroute icon instance so it can be shared across nodes.

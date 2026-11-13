@@ -19,6 +19,14 @@ import {
     registerKeyboardShortcuts,
 } from "./shortcuts.js";
 
+import {
+    installRerouteTitle,
+} from "./reroute.js";
+
+import {
+    installRerouteInfoMetadata,
+} from "./rerouteInfo.js";
+
 
 app.registerExtension({
 
@@ -90,13 +98,15 @@ app.registerExtension({
 
     nodeCreated(node) {
 
-        // Install Reroute icon if applicable.
+        // Install Reroute visuals and title tracking.
         addRerouteIcon(node);
+        installRerouteTitle(node);
     },
 
     loadedGraphNode(node) {
 
         addRerouteIcon(node);
+        installRerouteTitle(node);
     },
 
 
@@ -107,6 +117,7 @@ app.registerExtension({
     setup() {
 
         installRerouteIconDOMObserver();
+        installRerouteInfoMetadata();
 
         registerKeyboardShortcuts();
 

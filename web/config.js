@@ -11,5 +11,5 @@ export const MINIMIZED_COLOR =
     "#2e7d32";
 
 export const REROUTE_ICON_URL =
-    "/extensions/ComfyUI-HTMutilitty/web/icons/redirect.png";
+    "/extensions/ComfyUI-HTMutilitty/icons/redirect.png";
 

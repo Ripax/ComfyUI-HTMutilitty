@@ -42,14 +42,30 @@ export function createReroute() {
     }
 
 
+    const liteGraph =
+        globalThis.LiteGraph;
+
     if (
-        typeof graph.createReroute !==
-        "function"
+        typeof liteGraph?.createNode !==
+            "function" ||
+        typeof graph.add !== "function"
     ) {
 
         console.warn(
             "[ComfyUI-HTMutilitty] " +
-            "createReroute() unavailable"
+            "Reroute node creation unavailable"
+        );
+
+        return;
+    }
+
+    const reroute =
+        liteGraph.createNode("Reroute");
+
+    if (!reroute) {
+        console.warn(
+            "[ComfyUI-HTMutilitty] " +
+            "Reroute node type is not registered"
         );
 
         return;
@@ -59,16 +75,9 @@ export function createReroute() {
     const position =
         getMousePosition();
 
+    reroute.pos = position;
 
-    const reroute =
-        graph.createReroute(
-            position
-        );
-
-
-    if (!reroute) {
-        return;
-    }
+    graph.add(reroute);
 
 
     addRerouteIcon(

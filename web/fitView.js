@@ -16,6 +16,16 @@ export function fitView() {
 
 
     if (
+        typeof canvas.fitViewToSelectionAnimated ===
+        "function"
+    ) {
+
+        canvas.fitViewToSelectionAnimated();
+
+        return;
+    }
+
+    if (
         typeof canvas.fitViewToSelection ===
         "function"
     ) {

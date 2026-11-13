@@ -1,7 +1,8 @@
 import { app } from "../../scripts/app.js";
 
 import {
-    drawMinimizedOverlay,
+    applyMinimizedNodeColor,
+    restoreNodeColors,
 } from "./colors.js";
 
 
@@ -14,49 +15,6 @@ export function isNodeMinimized(node) {
     return (
         node?.__minimizeShortcutMinimized === true
     );
-}
-
-
-// ============================================================
-// Install Minimize Renderer
-// ============================================================
-
-export function installMinimizeRenderer(node) {
-
-    if (!node) {
-        return;
-    }
-
-    if (
-        node.__minimizeShortcutRendererInstalled
-    ) {
-        return;
-    }
-
-    node.__minimizeShortcutRendererInstalled =
-        true;
-
-
-    const originalDrawForeground =
-        node.onDrawForeground;
-
-
-    node.onDrawForeground = function(ctx) {
-
-        if (originalDrawForeground) {
-
-            originalDrawForeground.call(
-                this,
-                ctx
-            );
-        }
-
-
-        drawMinimizedOverlay(
-            this,
-            ctx
-        );
-    };
 }
 
 
@@ -78,7 +36,7 @@ export function minimizeNode(node) {
     node.__minimizeShortcutMinimized =
         true;
 
-    installMinimizeRenderer(node);
+    applyMinimizedNodeColor(node);
 }
 
 
@@ -100,6 +58,8 @@ export function restoreNode(node) {
     // Remove our state only.
     node.__minimizeShortcutMinimized =
         false;
+
+    restoreNodeColors(node);
 }
 
 

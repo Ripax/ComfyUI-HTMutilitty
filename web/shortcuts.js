@@ -67,7 +67,7 @@ export function handleShortcut(event) {
     ) {
 
         event.preventDefault();
-        event.stopPropagation();
+        event.stopImmediatePropagation();
 
         createReroute();
 
@@ -76,12 +76,13 @@ export function handleShortcut(event) {
 
 
     // --------------------------------------------------------
-    // F
+    // f
     // Fit View
     // --------------------------------------------------------
 
     if (
-        event.key.toLowerCase() === "f"
+        event.key === "f" ||
+        event.code === "KeyF"
     ) {
 
         event.preventDefault();

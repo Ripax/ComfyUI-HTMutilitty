@@ -33,8 +33,8 @@ The main bootstrap lives in `web/minimize_shortcut.js`. It calls `app.registerEx
 - `settings`: a UI toggle for the right-click menu
 - `commands`: a command that toggles selected nodes
 - `keybindings`: `Ctrl+Shift+M` for minimizing/expanding
-- `nodeCreated`: per-node registration for minimize rendering and reroute icons
-- `setup`: keyboard shortcut registration and a small console log banner
+- `nodeCreated` and `loadedGraphNode`: per-node reroute icon and title setup
+- `setup`: keyboard shortcut registration, the Reroute info-link observer, and a small console log banner
 
 ### State and rendering helpers
 
@@ -42,9 +42,11 @@ The extension keeps its behavior split into small frontend modules:
 
 - `web/config.js`: shared IDs, colors, and static asset URLs.
 - `web/minimize.js`: minimization state, toggle logic, and selected-node handling. This is the core of the feature and uses `node.flags.collapsed` plus a custom `__minimizeShortcutMinimized` flag to keep the UI state.
-- `web/shortcuts.js`: handles keyboard shortcuts like `.` and `F` in addition to the minimize shortcut flow.
-- `web/rerouteIcon.js`: adds the reroute icon overlay when applicable.
-- `web/colors.js`: renders the green minimized-node overlay and border.
+- `web/shortcuts.js`: handles keyboard shortcuts like `.` and `f` in addition to the minimize shortcut flow.
+- `web/reroute.js`: creates Reroute nodes and updates their titles from the connected input node.
+- `web/rerouteInfo.js`: adds project override, date, and GitHub details to the embedded Reroute Info panel.
+- `web/rerouteIcon.js`: renders Reroute title bars and icons in classic mode and Nodes 2.0.
+- `web/colors.js`: applies green node colors while minimized and restores the original colors on expand.
 - `web/fitView.js`: centers or fits the canvas around selected nodes.
 - `web/state.js`: stores the loaded reroute icon instance so it can be shared across nodes.
 
@@ -53,9 +55,9 @@ The extension keeps its behavior split into small frontend modules:
 - Keep this project frontend-only. Avoid introducing backend or model logic unless the feature truly requires it.
 - Prefer the ComfyUI extension lifecycle (`settings`, `commands`, `keybindings`, `nodeCreated`, `setup`) over ad hoc globals or side effects.
 - Preserve the canvas API patterns used by ComfyUI: when changing node state, call `app.canvas?.setDirty?.(true, true)` so the UI redraws.
-- When adding visual effects, attach logic to `node.onDrawForeground` instead of replacing the canvas drawing pipeline wholesale.
+- For canvas-rendered nodes, attach visual effects to `node.onDrawForeground`. Nodes 2.0 renders nodes in the DOM, so add overlays to their node elements rather than drawing behind them on the canvas.
 - Treat node state as extension-owned metadata such as `__minimizeShortcutMinimized`; do not overwrite native ComfyUI node state unexpectedly.
-- Keep URLs and paths relative to the extension's static `web` directory. Static asset paths should continue to resolve under `/extensions/ComfyUI-HTMutilitty/web/...`.
+- Keep URLs and paths relative to the extension's static `web` directory. ComfyUI mounts that directory at `/extensions/ComfyUI-HTMutilitty/`.
 - This repository is intentionally minimal and dependency-free. Prefer direct, surgical edits with no added package or build tooling unless the repo clearly needs it.
 
 ## Working on this repo

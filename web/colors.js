@@ -1,87 +1,39 @@
 import { MINIMIZED_COLOR } from "./config.js";
 
 
-export function drawMinimizedOverlay(
-    node,
-    ctx
-) {
+export function applyMinimizedNodeColor(node) {
 
-    if (!node || !ctx) {
+    if (!node) {
         return;
     }
 
-    if (!node.__minimizeShortcutMinimized) {
+    if (!node.__minimizeShortcutOriginalColors) {
+        node.__minimizeShortcutOriginalColors = {
+            color: node.color,
+            bgcolor: node.bgcolor,
+        };
+    }
+
+    node.color = MINIMIZED_COLOR;
+    node.bgcolor = MINIMIZED_COLOR;
+}
+
+
+export function restoreNodeColors(node) {
+
+    if (!node) {
         return;
     }
 
-    const width =
-        node.size?.[0] || 100;
+    const originalColors =
+        node.__minimizeShortcutOriginalColors;
 
-    const height =
-        node.size?.[1] || 30;
+    if (!originalColors) {
+        return;
+    }
 
+    node.color = originalColors.color;
+    node.bgcolor = originalColors.bgcolor;
 
-    ctx.save();
-
-
-    // --------------------------------------------------------
-    // Green border
-    // --------------------------------------------------------
-
-    ctx.strokeStyle =
-        MINIMIZED_COLOR;
-
-    ctx.lineWidth = 3;
-
-    ctx.globalAlpha = 0.95;
-
-
-    ctx.strokeRect(
-        1.5,
-        1.5,
-        width - 3,
-        height - 3
-    );
-
-
-    // --------------------------------------------------------
-    // Green indicator
-    // --------------------------------------------------------
-
-    ctx.fillStyle =
-        MINIMIZED_COLOR;
-
-    ctx.globalAlpha = 0.25;
-
-    ctx.fillRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-
-    // --------------------------------------------------------
-    // Green status dot
-    // --------------------------------------------------------
-
-    ctx.globalAlpha = 1.0;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        width - 10,
-        10,
-        4,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle =
-        MINIMIZED_COLOR;
-
-    ctx.fill();
-
-
-    ctx.restore();
+    delete node.__minimizeShortcutOriginalColors;
 }

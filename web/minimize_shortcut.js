@@ -8,16 +8,24 @@ import {
 
 import {
     toggleSelectedNodes,
-    installMinimizeRenderer,
 } from "./minimize.js";
 
 import {
     addRerouteIcon,
+    installRerouteIconDOMObserver,
 } from "./rerouteIcon.js";
 
 import {
     registerKeyboardShortcuts,
 } from "./shortcuts.js";
+
+import {
+    installRerouteTitle,
+} from "./reroute.js";
+
+import {
+    installRerouteInfoMetadata,
+} from "./rerouteInfo.js";
 
 
 app.registerExtension({
@@ -73,7 +81,11 @@ app.registerExtension({
     keybindings: [
 
         {
-            combo: "CTRL+SHIFT+M",
+            combo: {
+                key: "m",
+                ctrl: true,
+                shift: true,
+            },
 
             commandId: COMMAND_ID,
         },
@@ -86,11 +98,15 @@ app.registerExtension({
 
     nodeCreated(node) {
 
-        // Install minimize renderer.
-        installMinimizeRenderer(node);
-
-        // Install Reroute icon if applicable.
+        // Install Reroute visuals and title tracking.
         addRerouteIcon(node);
+        installRerouteTitle(node);
+    },
+
+    loadedGraphNode(node) {
+
+        addRerouteIcon(node);
+        installRerouteTitle(node);
     },
 
 
@@ -99,6 +115,9 @@ app.registerExtension({
     // ========================================================
 
     setup() {
+
+        installRerouteIconDOMObserver();
+        installRerouteInfoMetadata();
 
         registerKeyboardShortcuts();
 
@@ -121,7 +140,7 @@ app.registerExtension({
 
 
         console.log(
-            "  F  → Fit View"
+            "  f  → Fit View"
         );
 
 
